@@ -47,8 +47,6 @@ class thriftFileHandler:
         absOutputPath = os.path.normpath(absPath + self._outputPath)
         pathList = self.getAllPath()
 
-        os.environ['outputDir'] = str(absOutputPath)
-        os.system('cd $outputDir')
         packDirName = str(self._originFilePath.split('/')[-1].split('.')[0])
         os.environ['packDirName'] = packDirName
         os.system('mkdir $packDirName')
@@ -59,11 +57,15 @@ class thriftFileHandler:
         os.environ['packName'] = packDirName + '.jar'
         os.system('jar cvf $packName ./$packDirName/*')
         # os.system('jar cvf $packName ./$packDirName/')
+
+        os.environ['outputDir'] = str(absOutputPath)
+        os.system('mv $packName $outputDir')
+
         os.system('rm -rf $packDirName')
 
 
 if __name__ == '__main__':
-    handler = thriftFileHandler("/../idl/ad/tianchi.thrift", '/.')
+    handler = thriftFileHandler("/../idl/ad/tianchi.thrift", '/../')
     pathList = handler.getAllPath()
     print pathList
     handler.makePack()
