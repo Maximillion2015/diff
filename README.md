@@ -12,6 +12,7 @@ git clone https://github.com/Maximillion2015/diff.git
 
 ```
 handler = thriftFileHandler(MainThriftPath, JarPath)
+handler.makePack()
 ```
 
 **命令**:
