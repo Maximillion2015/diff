@@ -1,7 +1,7 @@
 #! usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import re, os
+import re, os, sys
 
 class thriftFileHandler:
     # originFilePath是原始thrift文件路径
@@ -64,8 +64,10 @@ class thriftFileHandler:
         os.system('rm -rf $packDirName')
 
 
+
 if __name__ == '__main__':
-    handler = thriftFileHandler("/../../idl/ad/tianchi.thrift", '/../')
+    # handler = thriftFileHandler("/../../idl/ad/tianchi.thrift", '/../')
+    handler = thriftFileHandler(sys.argv[1], sys.argv[2])
     pathList = handler.getAllPath()
     print pathList
     handler.makePack()
