@@ -65,7 +65,7 @@ class thriftFileHandler:
 
 
 if __name__ == '__main__':
-    handler = thriftFileHandler("/../idl/ad/tianchi.thrift", '/../')
+    handler = thriftFileHandler("/../../idl/ad/tianchi.thrift", '/../')
     pathList = handler.getAllPath()
     print pathList
     handler.makePack()
