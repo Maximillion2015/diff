@@ -8,6 +8,12 @@ git clone https://github.com/Maximillion2015/diff.git
 
 获取该thrift文件引用的所有thrift文件，并打成jar包，存在目标路径下。
 
+**代码调用**:
+
+```
+handler = thriftFileHandler(MainThriftPath, JarPath)
+```
+
 **命令**:
 
 ```
