@@ -63,7 +63,7 @@ class thriftFileHandler:
         accessKey = "SW7NH22ZE63DS2E09V0U"
 
         client = tos.TosClient(bucket, accessKey, cluster="default", timeout=10)
-        tosKey = "adtesttos_flow_" + packDirName
+        tosKey = "adtesttos_flow_" + packDirName + '.jar'
 
         jarName = self._outputPath + packDirName + '.jar'
         with open(jarName) as f:
@@ -73,30 +73,21 @@ class thriftFileHandler:
 
 
     def gen_thrift(self, thriftPath):
-        self.makePack(thriftPath)
-
         with open(thriftPath, 'r') as f:
             # print f.read()
             # matchObj = re.match('service', f.read())
             pattern = re.compile(r'service\s(.*?)\s{')
             match =pattern.findall(f.read())
 
-
-        return self.makePack(thriftPath), match
-
-
-
-
-
-
+        return self.makePack(thriftPath), match[0]
 
 if __name__ == '__main__':
     # handler = thriftFileHandler("/../../idl/ad/tianchi.thrift", '/../')
-    handler = thriftFileHandler('/Users/zhangyifeng/Desktop/')
+    handler = thriftFileHandler('/home/zhangyifeng/test/')
     # pathList = handler.getAllPath()
     # print pathList
     # handler.gen_thrift("/Users/zhangyifeng/repos/py/idl/ad/tianchi.thrift")
-    handler.gen_thrift("/Users/zhangyifeng/repos/py/idl/ad/tianchi.thrift")
+    print  handler.gen_thrift("/home/zhangyifeng/repos/idl/ad/tianchi.thrift")
     # handler.makePack()
 
 
