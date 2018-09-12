@@ -1,22 +1,18 @@
 #! usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import re, os, sys
+import re, os
+from pytos import tos
 
 class thriftFileHandler:
     # originFilePath是原始thrift文件路径
-    def __init__(self, originFilePath="", outputPath=""):
-        self._originFilePath = originFilePath
+    def __init__(self, outputPath=""):
         self._outputPath = outputPath
 
 
-    def getAllPath(self):
+    def getAllPath(self, filePath):
         # 记录所有path
         allPath = set()
-
-        # 项目根路径的绝对路径
-        absPath = os.path.abspath(".")
-        filePath = os.path.normpath(absPath+self._originFilePath)
 
 
         pathStack = set([filePath])
@@ -41,13 +37,11 @@ class thriftFileHandler:
         return pathList
 
 
-    def makePack(self):
-        # 目标路径的绝对路径
-        absPath = os.path.abspath(".")
-        absOutputPath = os.path.normpath(absPath + self._outputPath)
-        pathList = self.getAllPath()
+    def makePack(self, inputPath):
 
-        packDirName = str(self._originFilePath.split('/')[-1].split('.')[0])
+        pathList = self.getAllPath(inputPath)
+
+        packDirName = str(inputPath.split('/')[-1].split('.')[0])
         os.environ['packDirName'] = packDirName
         os.system('mkdir $packDirName')
         for filePath in pathList:
@@ -58,19 +52,52 @@ class thriftFileHandler:
         os.system('jar cvf $packName ./$packDirName/*')
         # os.system('jar cvf $packName ./$packDirName/')
 
-        os.environ['outputDir'] = str(absOutputPath)
+        os.environ['outputDir'] = str(self._outputPath)
         os.system('mv $packName $outputDir')
+        os.system('mv ././$packDirName/* $outputDir')
+        os.system('rm -rf ./$packDirName')
 
-        os.system('rm -rf $packDirName')
+        # 申请的Bucket名字
+        bucket = "adtesttos"
+        # 申请的AccessKey
+        accessKey = "SW7NH22ZE63DS2E09V0U"
+
+        client = tos.TosClient(bucket, accessKey, cluster="default", timeout=10)
+        tosKey = "adtesttos_flow_" + packDirName
+
+        jarName = self._outputPath + packDirName + '.jar'
+        with open(jarName) as f:
+            client.put_object(tosKey, f.read())
+
+        return tosKey
+
+
+    def gen_thrift(self, thriftPath):
+        self.makePack(thriftPath)
+
+        with open(thriftPath, 'r') as f:
+            # print f.read()
+            # matchObj = re.match('service', f.read())
+            pattern = re.compile(r'service\s(.*?)\s{')
+            match =pattern.findall(f.read())
+
+
+        return self.makePack(thriftPath), match
+
+
+
+
 
 
 
 if __name__ == '__main__':
     # handler = thriftFileHandler("/../../idl/ad/tianchi.thrift", '/../')
-    handler = thriftFileHandler(sys.argv[1], sys.argv[2])
-    pathList = handler.getAllPath()
-    print pathList
-    handler.makePack()
+    handler = thriftFileHandler('/Users/zhangyifeng/Desktop/')
+    # pathList = handler.getAllPath()
+    # print pathList
+    # handler.gen_thrift("/Users/zhangyifeng/repos/py/idl/ad/tianchi.thrift")
+    handler.gen_thrift("/Users/zhangyifeng/repos/py/idl/ad/tianchi.thrift")
+    # handler.makePack()
 
 
 
